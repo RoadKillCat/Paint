@@ -1,0 +1,53 @@
+<html>
+<head>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+}
+</style>
+</head>
+
+<body>
+<canvas id="cnvs">
+
+</canvas>
+
+<script>
+cnvs = document.getElementById("cnvs");
+ctx = cnvs.getContext("2d");
+
+
+function resize(){
+    cnvs.width = innerWidth;
+    cnvs.height = innerHeight;
+}
+
+function mouseDown(e){
+    ctx.moveTo(e.offsetX, e.offsetY);
+    document.addEventListener("mousemove", mouseMove);
+    document.addEventListener("mouseup", mouseUp);
+    document.removeEventListener("mousedown", mouseDown);
+}
+
+function mouseMove(e){
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+}
+
+function mouseUp(){
+    document.removeEventListener("mousemove", mouseMove);
+    document.addEventListener("mousedown", mouseDown);
+    document.removeEventListener("mouseup", mouseUp);
+}
+
+resize();
+document.addEventListener("resize", resize);
+document.addEventListener("mousedown", mouseDown);
+
+</script>
+
+
+</body>
+
+</html>
