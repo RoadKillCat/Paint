@@ -1,0 +1,102 @@
+<html>
+<body>
+<style>
+html, body {
+    margin: 0%;
+    padding: 0%;
+}
+</style>
+
+<canvas id="cnvs">
+</canvas>
+
+<script>
+cnvs = document.getElementById("cnvs");
+ctx = cnvs.getContext("2d");
+function resize(){
+    cnvs.width = innerWidth;
+    cnvs.height = innerHeight;
+    cols = (cnvs.width/cnvs.height) * rows;
+}
+resize()
+window.addEventListener("resize", resize)
+var rows = 100;
+var cols = (cnvs.width/cnvs.height) * rows;
+var scrn = [];
+var border = -1;
+
+for (var r = 0; r < rows; r++){
+    row = [];
+    for (var c = 0; c < cols; c++){
+        row.push("rgb(150, 0, 0)");
+    }
+    scrn.push(row);
+}
+
+function rgb(a){
+    return "rgb("+a[0]+","+a[1]+","+a[2]+")";
+}
+
+setInterval(function(){
+    ctx.clearRect(0, 0, cnvs.width, cnvs.height);
+    for (var r = 0; r < rows; r++){
+        for (var c = 0; c < cols; c++){
+            ctx.fillStyle = scrn[r][c];
+            ctx.fillRect(c*(cnvs.width/cols) + border/2, r*(cnvs.height/rows) + border/2, cnvs.width/cols - border/2, cnvs.height/rows - border/2)
+        }
+    }
+}, 10);
+
+
+function fill(x, y, toFill, col){
+    if (scrn[y][x] == col || scrn[y][x] != toFill){
+        return
+    }
+    scrn[y][x] = col
+    var neighbours = [[x, y+1], [x, y-1], [x+1, y], [x-1, y]]
+    for (var i = 0; i < 4; i++){
+        var p = neighbours[i]
+        if (p[1] >= 0 && p[1] < rows && p[0] >= 0 && p[0] < cols){
+            fill(p[0], p[1], toFill, col)
+        }
+    }
+}
+
+window.addEventListener("mousedown", mousedown);
+
+function mousedown(e){
+    lastSquare = [parseInt(e.offsetX/(cnvs.width/cols)), parseInt(e.offsetY/(cnvs.height/rows))]
+    lastDownSquare = lastSquare
+    window.addEventListener("mouseup", mouseup);
+    window.addEventListener("mousemove", mousemove);
+    window.removeEventListener("mousedown", mousedown);
+}
+
+function mouseup(e){
+    sqr = [parseInt(e.offsetX/(cnvs.width/cols)), parseInt(e.offsetY/(cnvs.height/rows))] 
+    if (sqr[0] == lastDownSquare[0] && sqr[1] == lastDownSquare[1]){
+        console.log("filling")
+        fill(sqr[0], sqr[1], scrn[sqr[1]][sqr[0]], "rgb(0,0,255)")
+    }
+    window.addEventListener("mousedown", mousedown);
+    window.removeEventListener("mousemove", mousemove);
+    window.removeEventListener("mousup", mouseup);
+}
+
+function lerp(x0, x1, i){
+    return x0 + (x1 - x0) * i
+}
+
+
+function mousemove(e){
+    sqr = [parseInt(e.offsetX/(cnvs.width/cols)), parseInt(e.offsetY/(cnvs.height/rows))] 
+    for (var i = 0; i <= 1; i += 0.01){
+        scrn[parseInt(lerp(sqr[1], lastSquare[1], i))][parseInt(lerp(sqr[0], lastSquare[0], i))] = "rgb(0,0,0)"
+    }
+    lastSquare = [parseInt(e.offsetX/(cnvs.width/cols)), parseInt(e.offsetY/(cnvs.height/rows))]  
+}
+</script>
+
+
+</body>
+</html>
