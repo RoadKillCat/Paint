@@ -9,13 +9,14 @@ html, body {
 </head>
 
 <body>
-<canvas id="cnvs">
+<canvas id='cnvs'>
 
 </canvas>
-
 <script>
-cnvs = document.getElementById("cnvs");
-ctx = cnvs.getContext("2d");
+cnvs = document.getElementById('cnvs');
+ctx = cnvs.getContext('2d');
+
+ctx.lineWidth = 3;
 
 
 function resize(){
@@ -23,31 +24,29 @@ function resize(){
     cnvs.height = innerHeight;
 }
 
-function mouseDown(e){
+function mousedown(e){
     ctx.moveTo(e.offsetX, e.offsetY);
-    document.addEventListener("mousemove", mouseMove);
-    document.addEventListener("mouseup", mouseUp);
-    document.removeEventListener("mousedown", mouseDown);
+    document.addEventListener('mousemove', mousemove);
+    document.addEventListener('mouseup', mouseup);
+    document.removeEventListener('mousedown', mousedown);
 }
 
-function mouseMove(e){
+function mousemove(e){
     ctx.lineTo(e.offsetX, e.offsetY);
     ctx.stroke();
 }
 
-function mouseUp(){
-    document.removeEventListener("mousemove", mouseMove);
-    document.addEventListener("mousedown", mouseDown);
-    document.removeEventListener("mouseup", mouseUp);
+function mouseup(){
+    document.removeEventListener('mousemove', mousemove);
+    document.addEventListener('mousedown', mousedown);
+    document.removeEventListener('mouseup', mouseup);
 }
 
 resize();
-document.addEventListener("resize", resize);
-document.addEventListener("mousedown", mouseDown);
+
+document.addEventListener('mousedown', mousedown);
+window.addEventListener('mousewheel', e=>ctx.lineWidth=Math.max(0,ctx.lineWidth+e.deltaY)/100);
 
 </script>
-
-
 </body>
-
 </html>
